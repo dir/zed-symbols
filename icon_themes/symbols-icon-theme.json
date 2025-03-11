@@ -1701,7 +1701,7 @@
         "ionic": { "path": "./icons/ionic.svg" },
         "java": { "path": "./icons/java.svg" },
         "jest": { "path": "./icons/jest.svg" },
-        "javascript": { "path": "./icons/js.svg" },
+        "javascript": { "path": "./icons/javascript.svg" },
         "javascript-test": { "path": "./icons/js-test.svg" },
         "json": { "path": "./icons/brackets-yellow.svg" },
         "julia": { "path": "./icons/julia.svg" },
