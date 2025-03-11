@@ -1758,7 +1758,7 @@
         "terraform": { "path": "./icons/terraform.svg" },
         "toml": { "path": "./icons/gear.svg" },
         "twig": { "path": "./icons/twig.svg" },
-        "typescript": { "path": "./icons/ts.svg" },
+        "typescript": { "path": "./icons/typescript.svg" },
         "typescript-config": { "path": "./icons/tsconfig.svg" },
         "typescript-def": { "path": "./icons/ts-types.svg" },
         "typescript-test": { "path": "./icons/ts-test.svg" },
