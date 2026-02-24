@@ -4648,8 +4648,8 @@
         "YUMMACSS.CSS": "yummacss",
         "components.json": "shadcn",
         "COMPONENTS.JSON": "shadcn",
-        "turbo.jsonc": "turbo",
-        "TURBO.JSONC": "turbo"
+        "turbo.jsonc": "turborepo",
+        "TURBO.JSONC": "turborepo"
       }
     }
   ]
