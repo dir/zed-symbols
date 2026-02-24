@@ -3214,7 +3214,8 @@
         "v": "v",
         "nix": "nix",
         "fc": "func",
-        "pl": "perl"
+        "pl": "perl",
+        "PL": "perl"
       },
       "file_stems": {
         "orval.config.js": "orval",
