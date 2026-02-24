@@ -22,24 +22,12 @@ fs.writeFileSync(
   JSON.stringify(zedManifest, null, 2),
 );
 
-const syncIcons = (sourceDir: string, destDir: string) => {
-  if (!fs.existsSync(sourceDir)) {
-    throw new Error(`Icon source directory is missing: ${sourceDir}`);
-  }
-
+const copyIcons = (sourceDir: string, destDir: string) => {
   if (!fs.existsSync(destDir)) {
     fs.mkdirSync(destDir, { recursive: true });
   }
 
-  const sourceFiles = new Set(fs.readdirSync(sourceDir));
-
-  fs.readdirSync(destDir).forEach((file) => {
-    if (!sourceFiles.has(file)) {
-      fs.rmSync(path.join(destDir, file));
-    }
-  });
-
-  sourceFiles.forEach((file) => {
+  fs.readdirSync(sourceDir).forEach((file) => {
     const sourceFile = path.join(sourceDir, file);
     const destFile = path.join(destDir, file);
     fs.copyFileSync(sourceFile, destFile);
@@ -47,13 +35,16 @@ const syncIcons = (sourceDir: string, destDir: string) => {
 };
 
 // Copy icons from repo to the icons directory
-syncIcons(
+copyIcons(
   path.join(repositoryDir, "./src/icons/files"),
   path.join(import.meta.dirname, "../icons/files"),
 );
 
-syncIcons(
+copyIcons(
   path.join(repositoryDir, "./src/icons/folders"),
   path.join(import.meta.dirname, "../icons/folders"),
 );
-console.log("Symbols Icon Theme generated successfully.");
+
+fs.rmSync(repositoryDir, { recursive: true });
+
+console.log("Symbols Icon Theme icons copied successfuly.");
