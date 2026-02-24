@@ -3213,7 +3213,8 @@
         "toml": "gear",
         "v": "v",
         "nix": "nix",
-        "fc": "func"
+        "fc": "func",
+        "pl": "perl"
       },
       "file_stems": {
         "orval.config.js": "orval",
