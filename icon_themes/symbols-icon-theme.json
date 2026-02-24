@@ -4647,7 +4647,9 @@
         "yummacss.css": "yummacss",
         "YUMMACSS.CSS": "yummacss",
         "components.json": "shadcn",
-        "COMPONENTS.JSON": "shadcn"
+        "COMPONENTS.JSON": "shadcn",
+        "turbo.jsonc": "turbo",
+        "TURBO.JSONC": "turbo"
       }
     }
   ]
