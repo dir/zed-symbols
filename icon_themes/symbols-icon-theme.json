@@ -4648,6 +4648,8 @@
         "YUMMACSS.CSS": "yummacss",
         "components.json": "shadcn",
         "COMPONENTS.JSON": "shadcn",
+        ".oxfmtrc.json": "oxlint",
+        ".OXFMTRC.JSON": "oxlint",
         "turbo.jsonc": "turborepo",
         "TURBO.JSONC": "turborepo"
       }
