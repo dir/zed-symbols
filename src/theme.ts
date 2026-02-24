@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import { customMappings } from "./custom-mappings";
 import type { IconTheme } from "./types/icon-theme";
 import type { VSCodeIconTheme } from "./types/vscode-icon-theme";
 
@@ -37,36 +36,33 @@ const resolveRepositoryDir = () => {
 const toZedIconKey = (iconKey: string): string =>
   keyMapping[iconKey] || iconKey;
 
-const mergeCustomMappings = (theme: VSCodeIconTheme): VSCodeIconTheme => ({
-  ...theme,
-  fileExtensions: {
-    ...(theme.fileExtensions ?? {}),
-    ...(customMappings.fileExtensions ?? {}),
-  },
-  fileNames: {
-    ...(theme.fileNames ?? {}),
-    ...(customMappings.fileNames ?? {}),
-  },
-  folderNames: {
-    ...(theme.folderNames ?? {}),
-    ...(customMappings.folderNames ?? {}),
-  },
-  folderNamesExpanded: {
-    ...(theme.folderNamesExpanded ?? {}),
-    ...(customMappings.folderNamesExpanded ?? {}),
-  },
-});
+const resolveThemePath = (repoDir: string): string => {
+  const modifiedThemePath = path.join(
+    repoDir,
+    "./src/symbol-icon-theme.modified.json",
+  );
+  const defaultThemePath = path.join(repoDir, "./src/symbol-icon-theme.json");
+
+  if (fs.existsSync(modifiedThemePath)) {
+    return modifiedThemePath;
+  }
+
+  if (fs.existsSync(defaultThemePath)) {
+    return defaultThemePath;
+  }
+
+  throw new Error(
+    `Cannot find a vscode-symbols theme file in ${repoDir}.` +
+      " Expected src/symbol-icon-theme.modified.json or src/symbol-icon-theme.json.",
+  );
+};
 
 export const repositoryDir = resolveRepositoryDir();
+export const repositoryThemePath = resolveThemePath(repositoryDir);
 
 export const getTheme = async (): Promise<IconTheme> => {
-  const data = fs.readFileSync(
-    path.join(repositoryDir, "./src/symbol-icon-theme.json"),
-    "utf-8",
-  );
-  const symbolsIconTheme = mergeCustomMappings(
-    JSON.parse(data) as VSCodeIconTheme,
-  );
+  const data = fs.readFileSync(repositoryThemePath, "utf-8");
+  const symbolsIconTheme = JSON.parse(data) as VSCodeIconTheme;
 
   const transformedIconDefinitions = Object.fromEntries(
     Object.entries(symbolsIconTheme.iconDefinitions ?? {})

@@ -9,11 +9,17 @@ This project reads data from a local `vscode-symbols` clone by default:
 
 - Default path: `../vscode-symbols` (relative to this repository)
 - Override path: set `SYMBOLS_VSCODE_DIR=/absolute/path/to/vscode-symbols`
+- Preferred input file: `vscode-symbols/src/symbol-icon-theme.modified.json`
+- Fallback input file: `vscode-symbols/src/symbol-icon-theme.json`
 
 ## Custom Mappings
 
-Add your persistent custom mappings in `src/custom-mappings.ts`.
-They are merged on top of upstream mappings during `npm run build`.
+Custom mappings are managed in the workspace root:
+
+- `../custom-mappings.json`
+
+Those mappings are applied to
+`vscode-symbols/src/symbol-icon-theme.modified.json` before build.
 
 Supported mapping groups:
 
@@ -26,20 +32,16 @@ Use icon keys from `vscode-symbols/src/symbol-icon-theme.json`.
 
 ## Update Workflow
 
-1. Sync your local `vscode-symbols` fork with upstream.
-2. Rebuild this repository from that updated source.
-
-One command from this repository:
+Run from the workspace root (`../`):
 
 ```bash
-npm run sync:from-vscode
+pnpm run workspace:sync
 ```
 
-Or run manually:
+Or run only the zed build pipeline (apply mappings + build):
 
 ```bash
-cd ../vscode-symbols && npm run sync:upstream
-cd ../zed-symbols && npm run build
+pnpm run zed:build
 ```
 
 ## License
