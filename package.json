@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "build": "npx tsx src/build.ts",
-    "dev": "npx tsx src/build.ts --watch"
+    "dev": "npx tsx src/build.ts --watch",
+    "sync:from-vscode": "npm --prefix ../vscode-symbols run sync:upstream && npm run build"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.6",
-    "@types/node": "^22.14.1",
-    "simple-git": "3.28.0"
+    "@types/node": "^22.14.1"
   },
   "peerDependencies": {
     "typescript": "5"

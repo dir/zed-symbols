@@ -1,10 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import { simpleGit } from "simple-git";
+import { customMappings } from "./custom-mappings";
 import type { IconTheme } from "./types/icon-theme";
 import type { VSCodeIconTheme } from "./types/vscode-icon-theme";
-
-const symbolsRepository = "https://github.com/miguelsolorio/vscode-symbols.git";
 
 const keyMapping: { [key: string]: string } = {
   git: "vcs",
@@ -16,60 +14,65 @@ const keyMapping: { [key: string]: string } = {
   template: "templ",
 };
 
-const updateToLatestTag = async (repoDir: string) => {
-  const git = simpleGit({
-    baseDir: repoDir,
-    binary: "git",
-    maxConcurrentProcesses: 1,
-    trimmed: false,
-  });
+const baseDir = path.join(import.meta.dirname, "../");
+const defaultRepositoryDir = path.resolve(baseDir, "../vscode-symbols");
+const repositoryDirFromEnv = process.env.SYMBOLS_VSCODE_DIR;
 
-  const tags = await git.tags();
+const resolveRepositoryDir = () => {
+  const resolvedDir = repositoryDirFromEnv
+    ? path.resolve(repositoryDirFromEnv)
+    : defaultRepositoryDir;
+  const themePath = path.join(resolvedDir, "./src/symbol-icon-theme.json");
 
-  const latestTag = tags?.latest;
-
-  console.log(`Updating Symbols Repository to: ${latestTag}`);
-
-  await git.pull(symbolsRepository, latestTag);
-};
-
-const getRepoDir = async (): Promise<string> => {
-  const baseDir = path.join(import.meta.dirname, "../");
-
-  const repoDir = path.join(baseDir, "./symbols");
-
-  if (!fs.existsSync(repoDir)) {
-    const git = simpleGit({
-      baseDir: baseDir,
-      binary: "git",
-      maxConcurrentProcesses: 1,
-      trimmed: false,
-    });
-
-    console.log(`Cloning Symbols Repository in: ${repoDir}`);
-
-    await git.clone(symbolsRepository, repoDir);
+  if (!fs.existsSync(themePath)) {
+    throw new Error(
+      `Cannot find vscode-symbols source theme at ${themePath}.` +
+        " Clone your vscode-symbols fork next to zed-symbols or set SYMBOLS_VSCODE_DIR.",
+    );
   }
 
-  await updateToLatestTag(repoDir);
-
-  return repoDir;
+  return resolvedDir;
 };
 
-export const repositoryDir = await getRepoDir();
+const toZedIconKey = (iconKey: string): string =>
+  keyMapping[iconKey] || iconKey;
+
+const mergeCustomMappings = (theme: VSCodeIconTheme): VSCodeIconTheme => ({
+  ...theme,
+  fileExtensions: {
+    ...(theme.fileExtensions ?? {}),
+    ...(customMappings.fileExtensions ?? {}),
+  },
+  fileNames: {
+    ...(theme.fileNames ?? {}),
+    ...(customMappings.fileNames ?? {}),
+  },
+  folderNames: {
+    ...(theme.folderNames ?? {}),
+    ...(customMappings.folderNames ?? {}),
+  },
+  folderNamesExpanded: {
+    ...(theme.folderNamesExpanded ?? {}),
+    ...(customMappings.folderNamesExpanded ?? {}),
+  },
+});
+
+export const repositoryDir = resolveRepositoryDir();
 
 export const getTheme = async (): Promise<IconTheme> => {
   const data = fs.readFileSync(
     path.join(repositoryDir, "./src/symbol-icon-theme.json"),
     "utf-8",
   );
-  const symbolsIconTheme = JSON.parse(data) as VSCodeIconTheme;
+  const symbolsIconTheme = mergeCustomMappings(
+    JSON.parse(data) as VSCodeIconTheme,
+  );
 
   const transformedIconDefinitions = Object.fromEntries(
     Object.entries(symbolsIconTheme.iconDefinitions ?? {})
       .filter(([key]) => !key.startsWith("folder"))
       .map(([key, value]) => [
-        keyMapping[key] || key, // Apply key renaming if a mapping exists
+        toZedIconKey(key), // Apply key renaming if a mapping exists
         {
           path: value.iconPath,
         },
@@ -94,11 +97,18 @@ export const getTheme = async (): Promise<IconTheme> => {
     symbolsIconTheme.fileNames ?? {},
   ).reduce(
     (acc, [key, value]) => {
-      acc[key.toLowerCase()] = value;
-      acc[key.toUpperCase()] = value;
+      const normalizedValue = toZedIconKey(value);
+      acc[key.toLowerCase()] = normalizedValue;
+      acc[key.toUpperCase()] = normalizedValue;
       return acc;
     },
     {} as { [key: string]: string },
+  );
+
+  const transformedFileExtensions = Object.fromEntries(
+    Object.entries(symbolsIconTheme.fileExtensions ?? {}).map(
+      ([key, value]) => [key, toZedIconKey(value)],
+    ),
   );
 
   const named_directory_icons: IconTheme["named_directory_icons"] = {};
@@ -142,7 +152,7 @@ export const getTheme = async (): Promise<IconTheme> => {
       expanded: "./icons/folders/folder-open.svg",
     },
     named_directory_icons,
-    file_suffixes: symbolsIconTheme.fileExtensions ?? {},
+    file_suffixes: transformedFileExtensions,
     file_stems: transformedFileNames,
   };
 };
