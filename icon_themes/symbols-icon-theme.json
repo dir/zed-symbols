@@ -4046,8 +4046,8 @@
         ".VSCODEIGNORE": "ignore",
         ".hugo_build.lock": "hugo",
         ".HUGO_BUILD.LOCK": "hugo",
-        "robots.txt": "text",
-        "ROBOTS.TXT": "text",
+        "robots.txt": "robot",
+        "ROBOTS.TXT": "robot",
         "yarn.lock": "yarn",
         "YARN.LOCK": "yarn",
         "yarn": "yarn",
@@ -4651,7 +4651,11 @@
         ".oxfmtrc.json": "oxlint",
         ".OXFMTRC.JSON": "oxlint",
         "turbo.jsonc": "turborepo",
-        "TURBO.JSONC": "turborepo"
+        "TURBO.JSONC": "turborepo",
+        "artisan": "php",
+        "ARTISAN": "php",
+        "frankenphp": "exe",
+        "FRANKENPHP": "exe"
       }
     }
   ]
