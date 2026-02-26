@@ -4659,6 +4659,8 @@
         "CADDYFILE": "gear",
         ".oxfmtrc.json": "oxlint",
         ".OXFMTRC.JSON": "oxlint",
+        ".oxfmtrc.jsonc": "oxlint",
+        ".OXFMTRC.JSONC": "oxlint",
         "turbo.jsonc": "turborepo",
         "TURBO.JSONC": "turborepo",
         "artisan": "php",
